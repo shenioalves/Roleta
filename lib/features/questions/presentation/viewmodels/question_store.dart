@@ -55,9 +55,6 @@ abstract class QuestionStoreBase with Store {
     final sectorAngle = (2 * pi) / totalQuestions;
     final centerOfWinnerSlice = (winnerIndex! * sectorAngle) + (sectorAngle / 2);
 
-    // O centro da fatia i inicialmente está em: centerOfWinnerSlice - pi/2.
-    // Queremos que com a rotação R, ele termine em -pi/2 (topo).
-    // (centerOfWinnerSlice - pi/2) + R = -pi/2 => R = -centerOfWinnerSlice.
     targetRotationAngle = -centerOfWinnerSlice;
   }
 }

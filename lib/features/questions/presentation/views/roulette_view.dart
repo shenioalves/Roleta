@@ -11,37 +11,52 @@ class RouletteView extends StatelessWidget {
   const RouletteView({super.key, required this.store});
 
   void _showQuestionDialog(BuildContext context, int index) {
-    // Sort keys to match the visual order (index 0 is the first slice)
     final sortedIds = store.questions.keys.toList()..sort();
     final questionId = sortedIds[index];
     final questionText =
         store.questions[questionId] ?? 'Pergunta não encontrada';
-
     showDialog(
       context: context,
-
       builder: (context) => AlertDialog(
         backgroundColor: AppColors.background,
-        title: Text(
-          'Pergunta #${index + 1}',
-          style: const TextStyle(
-            color: AppColors.secondary,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        content: Text(questionText, style: const TextStyle(fontSize: 18)),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text(
-              'FECHAR',
-              style: TextStyle(
-                color: AppColors.primary,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Pergunta #${index + 1}',
+              style: const TextStyle(
+                color: AppColors.secondary,
                 fontWeight: FontWeight.bold,
               ),
             ),
-          ),
-        ],
+            IconButton(
+              icon: const Icon(Icons.close, color: AppColors.primary),
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(),
+              onPressed: () => Navigator.pop(context),
+            ),
+          ],
+        ),
+        content: Wrap(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                vertical: 16.0,
+                horizontal: 18.0,
+              ),
+              child: Text(questionText, style: const TextStyle(fontSize: 18)),
+            ),
+            Positioned(
+              top: 0,
+              right: 0,
+              child: Image.asset(
+                'assets/tito_pensador.jpeg',
+
+                fit: BoxFit.cover,
+              ),
+            ),
+          ],
+        ),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
     );

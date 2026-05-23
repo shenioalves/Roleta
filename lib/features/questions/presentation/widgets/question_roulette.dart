@@ -44,20 +44,17 @@ class _QuestionRouletteState extends State<QuestionRoulette>
   void spin() {
     if (_controller.isAnimating || widget.store.totalQuestions == 0) return;
 
-    // 1. Sorteia o índice vencedor e calcula o ângulo no ViewModel
     widget.store.drawWinner();
 
     final int winnerIndex = widget.store.winnerIndex!;
     final double targetRotationRelative = widget.store.targetRotationAngle;
 
-    // Adicionamos voltas completas (mínimo 5 voltas) para o efeito visual
     double fullSpins = (5 + _random.nextInt(3)) * 2 * pi;
     double finalRotation =
         _currentRotation +
         fullSpins +
         (targetRotationRelative - (_currentRotation % (2 * pi)));
 
-    // Garante que o giro seja sempre para frente
     if (finalRotation <= _currentRotation) {
       finalRotation += 2 * pi;
     }
@@ -90,121 +87,135 @@ class _QuestionRouletteState extends State<QuestionRoulette>
               final size =
                   min(constraints.maxWidth, constraints.maxHeight) * 0.9;
 
-              return Center(
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  alignment: Alignment.center,
-                  children: [
-                    // ROLETA UNIFICADA: Imagem + Números + Fatias giram juntos
-                    AnimatedBuilder(
-                      animation: _animation,
-                      builder: (context, child) {
-                        return Transform.rotate(
-                          angle: _animation.value,
-                          child: child,
-                        );
-                      },
-                      child: Stack(
-                        clipBehavior: Clip.none,
+              return Row(
+                children: [
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Image.asset(
+                        'assets/titp_ansioso.jpeg',
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
 
-                        alignment: Alignment.center,
-                        children: [
-                          // Disco de Fatias
-                          SizedBox(
-                            width: size,
-                            height: size,
-                            child: CustomPaint(
-                              painter: RoulettePainter(
-                                count: widget.store.totalQuestions,
-                                color1: AppColors.primary,
-                                color2: AppColors.secondary,
+                  Stack(
+                    clipBehavior: Clip.none,
+                    alignment: Alignment.center,
+                    children: [
+                      AnimatedBuilder(
+                        animation: _animation,
+                        builder: (context, child) {
+                          return Transform.rotate(
+                            angle: _animation.value,
+                            child: child,
+                          );
+                        },
+                        child: Stack(
+                          clipBehavior: Clip.none,
+                          alignment: Alignment.center,
+                          children: [
+                            SizedBox(
+                              width: size,
+                              height: size,
+                              child: CustomPaint(
+                                painter: RoulettePainter(
+                                  count: widget.store.totalQuestions,
+                                  color1: AppColors.primary,
+                                  color2: AppColors.secondary,
+                                ),
                               ),
                             ),
-                          ),
-                          // Números
-                          ...List.generate(widget.store.totalQuestions, (
-                            index,
-                          ) {
-                            final sectorAngle =
-                                (2 * pi) / widget.store.totalQuestions;
-                            final angle =
-                                index * sectorAngle +
-                                sectorAngle /
-                                    2; // Centraliza a posição do número na fatia
+                            ...List.generate(widget.store.totalQuestions, (
+                              index,
+                            ) {
+                              final sectorAngle =
+                                  (2 * pi) / widget.store.totalQuestions;
+                              final angle =
+                                  index * sectorAngle + sectorAngle / 2;
 
-                            return Transform.rotate(
-                              angle: angle,
-                              child: Container(
-                                height: size,
-                                width: size,
-                                alignment: Alignment.topCenter,
-                                child: Padding(
-                                  padding: EdgeInsets.only(top: 5),
-                                  child: Text(
-                                    '${index + 1}',
-                                    style: TextStyle(
-                                      fontSize: size * 0.06,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                      shadows: const [
-                                        Shadow(
-                                          blurRadius: 4.0,
-                                          color: Colors.black54,
-                                          offset: Offset(2.0, 2.0),
-                                        ),
-                                      ],
+                              return Transform.rotate(
+                                angle: angle,
+                                child: Container(
+                                  height: size,
+                                  width: size,
+                                  alignment: Alignment.topCenter,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(top: 5),
+                                    child: Text(
+                                      '${index + 1}',
+                                      style: TextStyle(
+                                        fontSize: size * 0.06,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                        shadows: const [
+                                          Shadow(
+                                            blurRadius: 4.0,
+                                            color: Colors.black54,
+                                            offset: Offset(2.0, 2.0),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }),
+                            Container(
+                              width: size * 0.8,
+                              height: size * 0.8,
+                              decoration: const BoxDecoration(
+                                color: AppColors.secondary,
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black38,
+                                    blurRadius: 15,
+                                    spreadRadius: 2,
+                                  ),
+                                ],
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(20.0),
+                                child: SvgPicture.asset(
+                                  'assets/logo.svg',
+                                  placeholderBuilder: (context) => const Center(
+                                    child: Text(
+                                      'TITAN',
+                                      style: TextStyle(
+                                        color: AppColors.secondary,
+                                        fontSize: 40,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
-                            );
-                          }),
-                          // LOGO TITAN CENTRAL (Aumentada e girando junto)
-                          Container(
-                            width: size * 0.8, // Aumentada
-                            height: size * 0.8,
-                            decoration: const BoxDecoration(
-                              color: AppColors.secondary,
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black38,
-                                  blurRadius: 15,
-                                  spreadRadius: 2,
-                                ),
-                              ],
                             ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(20.0),
-                              child: SvgPicture.asset(
-                                'assets/logo.svg',
-                                placeholderBuilder: (context) => const Center(
-                                  child: Text(
-                                    'TITAN',
-                                    style: TextStyle(
-                                      color: AppColors.secondary,
-                                      fontSize: 40,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
+                          ],
+                        ),
+                      ),
+                      Positioned(
+                        top: (constraints.maxHeight - size) / 2 - 70,
+                        child: Icon(
+                          Icons.arrow_drop_down_sharp,
+                          size: 80,
+                          color: Colors.red.shade900,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.bottomRight,
+                      child: Image.asset(
+                        'assets/tito_beats.jpeg',
+                        fit: BoxFit.cover,
                       ),
                     ),
-                    // PONTEIRO FIXO (No topo, posição 12h)
-                    Positioned(
-                      top: (constraints.maxHeight - size) / 2 - 70,
-                      child: Icon(
-                        Icons.arrow_drop_down_sharp,
-                        size: 80,
-                        color: Colors.red.shade900,
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               );
             },
           ),
@@ -257,14 +268,13 @@ class RoulettePainter extends CustomPainter {
       paint.color = i % 2 == 0 ? color1 : color2;
       canvas.drawArc(
         Rect.fromCircle(center: center, radius: radius),
-        (i * sectorAngle) - (pi / 2), // Começa do topo
+        (i * sectorAngle) - (pi / 2), 
         sectorAngle,
         true,
         paint,
       );
     }
 
-    // Linhas divisórias para melhor visualização
     paint.color = Colors.white24;
     paint.style = PaintingStyle.stroke;
     paint.strokeWidth = 2;
@@ -277,7 +287,6 @@ class RoulettePainter extends CustomPainter {
       );
     }
 
-    // Borda externa premium
     paint.color = AppColors.secondary;
     paint.strokeWidth = 8;
     canvas.drawCircle(center, radius, paint);
