@@ -5,19 +5,22 @@ class AudioService {
   final AudioPlayer _dingPlayer = AudioPlayer();
 
   Future<void> init() async {
-    await _spinPlayer.setSource(AssetSource('sounds/spin.mp3'));
-    await _dingPlayer.setSource(AssetSource('sounds/ding.mp3'));
+    await _spinPlayer.setPlayerMode(PlayerMode.lowLatency);
+    await _dingPlayer.setPlayerMode(PlayerMode.lowLatency);
+
+    await _spinPlayer.setReleaseMode(ReleaseMode.stop);
+    await _dingPlayer.setReleaseMode(ReleaseMode.stop);
   }
 
   Future<void> playSpinSound() async {
-    await _spinPlayer.seek(Duration.zero);
-    await _spinPlayer.resume();
+    await _spinPlayer.stop();
+    await _spinPlayer.play(AssetSource('sounds/spin.mp3'));
   }
 
   Future<void> playResultSound() async {
     await _spinPlayer.stop();
-    await _dingPlayer.seek(Duration.zero);
-    await _dingPlayer.resume();
+    await _dingPlayer.stop();
+    await _dingPlayer.play(AssetSource('sounds/ding.mp3'));
   }
 
   void dispose() {

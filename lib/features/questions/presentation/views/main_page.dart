@@ -33,23 +33,7 @@ class MainPage extends StatelessWidget {
             unselectedLabelColor: Colors.white60,
           ),
         ),
-        body: Container(
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            image: DecorationImage(
-              image: NetworkImage(
-                'https://www.transparenttextures.com/patterns/cubes.png',
-              ),
-              opacity: 0.5,
-            ),
-          ),
-          child: const TabBarView(
-            children: [
-              RouletteView(),
-              AdminView(),
-            ],
-          ),
-        ),
+        body: const TabBarView(children: [RouletteView(), AdminView()]),
       ),
     );
   }
