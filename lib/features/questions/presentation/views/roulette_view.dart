@@ -23,10 +23,11 @@ class RouletteView extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Pergunta #${index + 1}',
+              'Pergunta ${index + 1}',
               style: const TextStyle(
-                color: AppColors.secondary,
+                color: AppColors.primary,
                 fontWeight: FontWeight.bold,
+                fontSize: 30,
               ),
             ),
             IconButton(
