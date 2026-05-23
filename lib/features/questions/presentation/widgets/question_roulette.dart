@@ -51,6 +51,7 @@ class _QuestionRouletteState extends State<QuestionRoulette>
 
     _controller.forward(from: 0).then((_) {
       widget.store.updateRotation(widget.store.targetRotationAngle);
+      widget.store.completeRotation();
       if (widget.store.winnerIndex != null) {
         widget.onResult(widget.store.winnerIndex!);
       }

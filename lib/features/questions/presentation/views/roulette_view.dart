@@ -63,7 +63,7 @@ class RouletteView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final store = sl<QuestionStore>();
+    final store = locator<QuestionStore>();
 
     return Observer(
       builder: (_) {

@@ -1,15 +1,24 @@
 import 'package:get_it/get_it.dart';
+
 import '../../features/questions/data/repositories/question_repository.dart';
 import '../../features/questions/presentation/viewmodels/question_store.dart';
+import '../services/audio_service.dart';
 
-final GetIt sl = GetIt.instance;
+final GetIt locator = GetIt.instance;
 
 Future<void> setupServiceLocator() async {
+  // Services
+  final audioService = AudioService();
+  await audioService.init();
+  locator.registerSingleton<AudioService>(audioService);
+
   // Repositories
   final questionRepository = QuestionRepositoryImpl();
   await questionRepository.init();
-  sl.registerLazySingleton<QuestionRepository>(() => questionRepository);
+  locator.registerLazySingleton<QuestionRepository>(() => questionRepository);
 
   // Stores
-  sl.registerFactory(() => QuestionStore(sl<QuestionRepository>()));
+  locator.registerFactory(
+    () => QuestionStore(locator<QuestionRepository>(), locator<AudioService>()),
+  );
 }

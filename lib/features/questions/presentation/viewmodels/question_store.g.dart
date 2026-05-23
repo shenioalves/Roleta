@@ -156,6 +156,18 @@ mixin _$QuestionStore on QuestionStoreBase, Store {
   }
 
   @override
+  void completeRotation() {
+    final _$actionInfo = _$QuestionStoreBaseActionController.startAction(
+      name: 'QuestionStoreBase.completeRotation',
+    );
+    try {
+      return super.completeRotation();
+    } finally {
+      _$QuestionStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
 questions: ${questions},

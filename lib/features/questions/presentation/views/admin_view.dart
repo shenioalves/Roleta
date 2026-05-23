@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+
 import '../../../../core/di/service_locator.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../viewmodels/question_store.dart';
@@ -13,7 +14,7 @@ class AdminView extends StatefulWidget {
 
 class _AdminViewState extends State<AdminView> {
   final TextEditingController _controller = TextEditingController();
-  final QuestionStore store = sl<QuestionStore>();
+  final QuestionStore store = locator<QuestionStore>();
 
   void _addQuestion() {
     if (_controller.text.isNotEmpty) {
@@ -62,7 +63,10 @@ class _AdminViewState extends State<AdminView> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 16,
+                  ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -85,7 +89,7 @@ class _AdminViewState extends State<AdminView> {
             child: Observer(
               builder: (_) {
                 final questionIds = store.sortedIds;
-                
+
                 if (questionIds.isEmpty) {
                   return const Center(
                     child: Text('Nenhuma pergunta cadastrada.'),
@@ -97,14 +101,18 @@ class _AdminViewState extends State<AdminView> {
                   itemBuilder: (context, index) {
                     final id = questionIds[index];
                     final text = store.questions[id]!;
-                    
+
                     return Card(
                       margin: const EdgeInsets.only(bottom: 12),
-                      color: index % 2 == 0 ? Colors.white : Colors.grey.shade50,
+                      color: index % 2 == 0
+                          ? Colors.white
+                          : Colors.grey.shade50,
                       elevation: 2,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
-                        side: BorderSide(color: AppColors.primary.withValues(alpha: 0.3)),
+                        side: BorderSide(
+                          color: AppColors.primary.withValues(alpha: 0.3),
+                        ),
                       ),
                       child: ListTile(
                         leading: CircleAvatar(
@@ -119,7 +127,10 @@ class _AdminViewState extends State<AdminView> {
                           style: const TextStyle(fontWeight: FontWeight.w500),
                         ),
                         trailing: IconButton(
-                          icon: const Icon(Icons.delete_outline, color: Colors.red),
+                          icon: const Icon(
+                            Icons.delete_outline,
+                            color: Colors.red,
+                          ),
                           onPressed: () => store.deleteQuestion(id),
                         ),
                       ),

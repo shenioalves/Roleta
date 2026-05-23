@@ -1,5 +1,8 @@
 import 'dart:math';
+
 import 'package:mobx/mobx.dart';
+
+import '../../../../core/services/audio_service.dart';
 import '../../data/repositories/question_repository.dart';
 
 part 'question_store.g.dart';
@@ -8,8 +11,9 @@ class QuestionStore = QuestionStoreBase with _$QuestionStore;
 
 abstract class QuestionStoreBase with Store {
   final QuestionRepository _repository;
+  final AudioService _audioService;
 
-  QuestionStoreBase(this._repository) {
+  QuestionStoreBase(this._repository, this._audioService) {
     _loadQuestions();
   }
 
@@ -21,7 +25,7 @@ abstract class QuestionStoreBase with Store {
 
   @observable
   double targetRotationAngle = 0.0;
-  
+
   @observable
   double currentRotation = 0.0;
 
@@ -55,12 +59,15 @@ abstract class QuestionStoreBase with Store {
   @action
   void calculateRotation() {
     if (totalQuestions == 0) return;
-    
+
+    _audioService.playSpinSound();
+
     final random = Random();
     winnerIndex = random.nextInt(totalQuestions);
 
     final sectorAngle = (2 * pi) / totalQuestions;
-    final centerOfWinnerSlice = (winnerIndex! * sectorAngle) + (sectorAngle / 2);
+    final centerOfWinnerSlice =
+        (winnerIndex! * sectorAngle) + (sectorAngle / 2);
     final targetRelative = -centerOfWinnerSlice;
 
     double fullSpins = (5 + random.nextInt(3)) * 2 * pi;
@@ -72,12 +79,17 @@ abstract class QuestionStoreBase with Store {
     if (finalRotation <= currentRotation) {
       finalRotation += 2 * pi;
     }
-    
+
     targetRotationAngle = finalRotation;
   }
 
   @action
   void updateRotation(double value) {
     currentRotation = value;
+  }
+
+  @action
+  void completeRotation() {
+    _audioService.playResultSound();
   }
 }
