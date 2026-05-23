@@ -85,174 +85,177 @@ class _QuestionRouletteState extends State<QuestionRoulette>
           child: LayoutBuilder(
             builder: (context, constraints) {
               final size =
-                  min(constraints.maxWidth, constraints.maxHeight) * 0.8;
+                  min(constraints.maxWidth, constraints.maxHeight) * 0.7;
 
               return Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Expanded(
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Image.asset(
-                        'assets/tito_ansioso.jpeg',
-                        fit: BoxFit.cover,
-                      ),
+                    flex: 1,
+                    child: Image.asset(
+                      'assets/tito_ansioso.jpeg',
+                      alignment: Alignment.bottomLeft,
+                      fit: BoxFit.contain,
                     ),
                   ),
-
-                  Column(
-                    children: [
-                      Expanded(
-                        child: Stack(
-                          clipBehavior: Clip.none,
-                          alignment: Alignment.center,
-                          children: [
-                            AnimatedBuilder(
-                              animation: _animation,
-                              builder: (context, child) {
-                                return Transform.rotate(
-                                  angle: _animation.value,
-                                  child: child,
-                                );
-                              },
-                              child: Stack(
-                                clipBehavior: Clip.none,
-                                alignment: Alignment.center,
-                                children: [
-                                  SizedBox(
-                                    width: size,
-                                    height: size,
-                                    child: CustomPaint(
-                                      painter: RoulettePainter(
-                                        count: widget.store.totalQuestions,
-                                        color1: AppColors.primary,
-                                        color2: AppColors.secondary,
+                  Expanded(
+                    flex: 2,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Flexible(
+                          child: Stack(
+                            clipBehavior: Clip.none,
+                            alignment: Alignment.center,
+                            children: [
+                              AnimatedBuilder(
+                                animation: _animation,
+                                builder: (context, child) {
+                                  return Transform.rotate(
+                                    angle: _animation.value,
+                                    child: child,
+                                  );
+                                },
+                                child: Stack(
+                                  clipBehavior: Clip.none,
+                                  alignment: Alignment.center,
+                                  children: [
+                                    SizedBox(
+                                      width: size,
+                                      height: size,
+                                      child: CustomPaint(
+                                        painter: RoulettePainter(
+                                          count: widget.store.totalQuestions,
+                                          color1: AppColors.primary,
+                                          color2: AppColors.secondary,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  ...List.generate(
-                                    widget.store.totalQuestions,
-                                    (index) {
-                                      final sectorAngle =
-                                          (2 * pi) /
-                                          widget.store.totalQuestions;
-                                      final angle =
-                                          index * sectorAngle + sectorAngle / 2;
+                                    ...List.generate(
+                                      widget.store.totalQuestions,
+                                      (index) {
+                                        final sectorAngle =
+                                            (2 * pi) /
+                                            widget.store.totalQuestions;
+                                        final angle =
+                                            index * sectorAngle +
+                                            sectorAngle / 2;
 
-                                      return Transform.rotate(
-                                        angle: angle,
-                                        child: Container(
-                                          height: size,
-                                          width: size,
-                                          alignment: Alignment.topCenter,
-                                          child: Padding(
-                                            padding: const EdgeInsets.only(
-                                              top: 5,
-                                            ),
-                                            child: Text(
-                                              '${index + 1}',
-                                              style: TextStyle(
-                                                fontSize: size * 0.06,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.white,
-                                                shadows: const [
-                                                  Shadow(
-                                                    blurRadius: 4.0,
-                                                    color: Colors.black54,
-                                                    offset: Offset(2.0, 2.0),
-                                                  ),
-                                                ],
+                                        return Transform.rotate(
+                                          angle: angle,
+                                          child: Container(
+                                            height: size,
+                                            width: size,
+                                            alignment: Alignment.topCenter,
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                top: 5,
                                               ),
-                                            ),
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                  Container(
-                                    width: size * 0.8,
-                                    height: size * 0.8,
-                                    decoration: const BoxDecoration(
-                                      color: AppColors.secondary,
-                                      shape: BoxShape.circle,
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black38,
-                                          blurRadius: 15,
-                                          spreadRadius: 2,
-                                        ),
-                                      ],
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(20.0),
-                                      child: SvgPicture.asset(
-                                        'assets/logo.svg',
-                                        placeholderBuilder: (context) =>
-                                            const Center(
                                               child: Text(
-                                                'TITAN',
+                                                '${index + 1}',
                                                 style: TextStyle(
-                                                  color: AppColors.secondary,
-                                                  fontSize: 40,
+                                                  fontSize: size * 0.06,
                                                   fontWeight: FontWeight.bold,
+                                                  color: Colors.white,
+                                                  shadows: const [
+                                                    Shadow(
+                                                      blurRadius: 4.0,
+                                                      color: Colors.black54,
+                                                      offset: Offset(2.0, 2.0),
+                                                    ),
+                                                  ],
                                                 ),
                                               ),
                                             ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                    Container(
+                                      width: size * 0.8,
+                                      height: size * 0.8,
+                                      decoration: const BoxDecoration(
+                                        color: AppColors.secondary,
+                                        shape: BoxShape.circle,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black38,
+                                            blurRadius: 15,
+                                            spreadRadius: 2,
+                                          ),
+                                        ],
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(20.0),
+                                        child: SvgPicture.asset(
+                                          'assets/logo.svg',
+                                          placeholderBuilder: (context) =>
+                                              const Center(
+                                                child: Text(
+                                                  'TITAN',
+                                                  style: TextStyle(
+                                                    color: AppColors.secondary,
+                                                    fontSize: 40,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                            ),
-                            Positioned(
-                              top: (constraints.maxHeight - size) / 2 - 80,
-                              child: Icon(
-                                Icons.arrow_drop_down_sharp,
-                                size: 80,
-                                color: Colors.red.shade900,
+                              Positioned(
+                                top: (constraints.maxHeight - size) / 2 - 138,
+                                child: Icon(
+                                  Icons.arrow_drop_down_sharp,
+                                  size: 80,
+                                  color: Colors.red.shade900,
+                                ),
                               ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        ElevatedButton(
+                          onPressed: widget.store.totalQuestions > 0
+                              ? spin
+                              : null,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.secondary,
+                            foregroundColor: AppColors.primary,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 60,
+                              vertical: 25,
                             ),
-                          ],
-                        ),
-                      ),
-                      ElevatedButton(
-                        onPressed: widget.store.totalQuestions > 0
-                            ? spin
-                            : null,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.secondary,
-                          foregroundColor: AppColors.primary,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 60,
-                            vertical: 25,
+                            elevation: 10,
+                            side: const BorderSide(
+                              color: AppColors.primary,
+                              width: 2,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(40),
+                            ),
                           ),
-                          elevation: 10,
-                          side: const BorderSide(
-                            color: AppColors.primary,
-                            width: 2,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(40),
+                          child: const Text(
+                            'GIRAR ROLETA',
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
-                        child: const Text(
-                          'GIRAR ROLETA',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                    ],
+                        const SizedBox(height: 20),
+                      ],
+                    ),
                   ),
-
                   Expanded(
-                    child: Align(
+                    // flex: 1,
+                    child: Image.asset(
+                      'assets/tito_beats.jpeg',
                       alignment: Alignment.bottomRight,
-                      child: Image.asset(
-                        'assets/tito_beats.jpeg',
-                        fit: BoxFit.cover,
-                      ),
+                      fit: BoxFit.cover,
                     ),
                   ),
                 ],
