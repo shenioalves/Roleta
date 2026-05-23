@@ -19,45 +19,80 @@ class RouletteView extends StatelessWidget {
         store.questions[questionId] ?? 'Pergunta não encontrada';
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: AppColors.background,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Pergunta ${index + 1}',
-              style: const TextStyle(
-                color: AppColors.primary,
-                fontWeight: FontWeight.bold,
-                fontSize: 30,
+      builder: (context) {
+        final screenWidth = MediaQuery.sizeOf(context).width;
+        final isMobile = screenWidth < 600;
+
+        return AlertDialog(
+          backgroundColor: AppColors.background,
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Pergunta ${index + 1}',
+                style: TextStyle(
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.bold,
+                  fontSize: isMobile ? 24 : 30,
+                ),
               ),
-            ),
-            IconButton(
-              icon: const Icon(Icons.close, color: AppColors.primary),
-              padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(),
-              onPressed: () => Navigator.pop(context),
-            ),
-          ],
-        ),
-        content: Wrap(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                vertical: 16.0,
-                horizontal: 18.0,
+              IconButton(
+                icon: const Icon(Icons.close, color: AppColors.primary),
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+                onPressed: () => Navigator.pop(context),
               ),
-              child: Text(questionText, style: const TextStyle(fontSize: 18)),
-            ),
-            Positioned(
-              top: 0,
-              right: 0,
-              child: Image.asset('assets/tito_pensador.png', fit: BoxFit.cover),
-            ),
-          ],
-        ),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      ),
+            ],
+          ),
+          content: SingleChildScrollView(
+            child: isMobile
+                ? Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Text(
+                          questionText,
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                      ),
+                      Image.asset(
+                        'assets/tito_pensador.png',
+                        height: 150,
+                        fit: BoxFit.contain,
+                      ),
+                    ],
+                  )
+                : Wrap(
+                    children: [
+                      ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxWidth: screenWidth * 0.3,
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 16.0,
+                            horizontal: 18.0,
+                          ),
+                          child: Text(
+                            questionText,
+                            style: const TextStyle(fontSize: 18),
+                          ),
+                        ),
+                      ),
+                      Image.asset(
+                        'assets/tito_pensador.png',
+                        height: 250,
+                        fit: BoxFit.contain,
+                      ),
+                    ],
+                  ),
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+        );
+      },
     );
   }
 
