@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+
 import '../../../../core/theme/app_colors.dart';
 import '../viewmodels/question_store.dart';
-import 'roulette_view.dart';
 import 'admin_view.dart';
+import 'roulette_view.dart';
 
 class MainPage extends StatelessWidget {
   final QuestionStore store;
@@ -37,10 +38,12 @@ class MainPage extends StatelessWidget {
         ),
         body: Container(
           decoration: BoxDecoration(
-            color: Colors.grey.shade100,
+            color: Colors.white,
             image: const DecorationImage(
-              image: NetworkImage('https://www.transparenttextures.com/patterns/cubes.png'),
-              opacity: 0.05,
+              image: NetworkImage(
+                'https://www.transparenttextures.com/patterns/cubes.png',
+              ),
+              opacity: 0.5,
             ),
           ),
           child: TabBarView(

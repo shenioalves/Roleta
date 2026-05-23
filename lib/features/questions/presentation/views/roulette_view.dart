@@ -50,11 +50,7 @@ class RouletteView extends StatelessWidget {
             Positioned(
               top: 0,
               right: 0,
-              child: Image.asset(
-                'assets/tito_pensador.jpeg',
-
-                fit: BoxFit.cover,
-              ),
+              child: Image.asset('assets/tito_pensador.png', fit: BoxFit.cover),
             ),
           ],
         ),
