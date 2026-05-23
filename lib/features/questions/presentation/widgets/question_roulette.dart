@@ -1,6 +1,8 @@
 import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+
 import '../../../../core/theme/app_colors.dart';
 import '../viewmodels/question_store.dart';
 
@@ -44,14 +46,17 @@ class _QuestionRouletteState extends State<QuestionRoulette>
 
     // 1. Sorteia o índice vencedor e calcula o ângulo no ViewModel
     widget.store.drawWinner();
-    
+
     final int winnerIndex = widget.store.winnerIndex!;
     final double targetRotationRelative = widget.store.targetRotationAngle;
-    
+
     // Adicionamos voltas completas (mínimo 5 voltas) para o efeito visual
     double fullSpins = (5 + _random.nextInt(3)) * 2 * pi;
-    double finalRotation = _currentRotation + fullSpins + (targetRotationRelative - (_currentRotation % (2 * pi)));
-    
+    double finalRotation =
+        _currentRotation +
+        fullSpins +
+        (targetRotationRelative - (_currentRotation % (2 * pi)));
+
     // Garante que o giro seja sempre para frente
     if (finalRotation <= _currentRotation) {
       finalRotation += 2 * pi;
@@ -60,10 +65,7 @@ class _QuestionRouletteState extends State<QuestionRoulette>
     _animation = Tween<double>(
       begin: _currentRotation,
       end: finalRotation,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeOutQuart,
-    ));
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutQuart));
 
     _currentRotation = finalRotation;
 
@@ -85,11 +87,12 @@ class _QuestionRouletteState extends State<QuestionRoulette>
         Expanded(
           child: LayoutBuilder(
             builder: (context, constraints) {
-              // Aumento expressivo de tamanho (dominando a tela)
-              final size = min(constraints.maxWidth, constraints.maxHeight) * 0.95;
-              
+              final size =
+                  min(constraints.maxWidth, constraints.maxHeight) * 0.9;
+
               return Center(
                 child: Stack(
+                  clipBehavior: Clip.none,
                   alignment: Alignment.center,
                   children: [
                     // ROLETA UNIFICADA: Imagem + Números + Fatias giram juntos
@@ -102,6 +105,8 @@ class _QuestionRouletteState extends State<QuestionRoulette>
                         );
                       },
                       child: Stack(
+                        clipBehavior: Clip.none,
+
                         alignment: Alignment.center,
                         children: [
                           // Disco de Fatias
@@ -117,10 +122,16 @@ class _QuestionRouletteState extends State<QuestionRoulette>
                             ),
                           ),
                           // Números
-                          ...List.generate(widget.store.totalQuestions, (index) {
-                            final sectorAngle = (2 * pi) / widget.store.totalQuestions;
-                            final angle = index * sectorAngle + sectorAngle / 2; // Centraliza a posição do número na fatia
-                            
+                          ...List.generate(widget.store.totalQuestions, (
+                            index,
+                          ) {
+                            final sectorAngle =
+                                (2 * pi) / widget.store.totalQuestions;
+                            final angle =
+                                index * sectorAngle +
+                                sectorAngle /
+                                    2; // Centraliza a posição do número na fatia
+
                             return Transform.rotate(
                               angle: angle,
                               child: Container(
@@ -128,7 +139,7 @@ class _QuestionRouletteState extends State<QuestionRoulette>
                                 width: size,
                                 alignment: Alignment.topCenter,
                                 child: Padding(
-                                  padding: EdgeInsets.only(top: size * 0.08),
+                                  padding: EdgeInsets.only(top: 5),
                                   child: Text(
                                     '${index + 1}',
                                     style: TextStyle(
@@ -150,10 +161,10 @@ class _QuestionRouletteState extends State<QuestionRoulette>
                           }),
                           // LOGO TITAN CENTRAL (Aumentada e girando junto)
                           Container(
-                            width: size * 0.55, // Aumentada
-                            height: size * 0.55,
+                            width: size * 0.8, // Aumentada
+                            height: size * 0.8,
                             decoration: const BoxDecoration(
-                              color: Colors.white,
+                              color: AppColors.secondary,
                               shape: BoxShape.circle,
                               boxShadow: [
                                 BoxShadow(
@@ -185,18 +196,11 @@ class _QuestionRouletteState extends State<QuestionRoulette>
                     ),
                     // PONTEIRO FIXO (No topo, posição 12h)
                     Positioned(
-                      top: (constraints.maxHeight - size) / 2 - 20,
-                      child: Container(
-                        decoration: const BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(color: Colors.black26, blurRadius: 10)
-                          ],
-                        ),
-                        child: Icon(
-                          Icons.arrow_drop_down_sharp,
-                          size: 80,
-                          color: Colors.red.shade900,
-                        ),
+                      top: (constraints.maxHeight - size) / 2 - 70,
+                      child: Icon(
+                        Icons.arrow_drop_down_sharp,
+                        size: 80,
+                        color: Colors.red.shade900,
                       ),
                     ),
                   ],
@@ -243,7 +247,7 @@ class RoulettePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     if (count == 0) return;
-    
+
     final paint = Paint()..style = PaintingStyle.fill;
     final center = Offset(size.width / 2, size.height / 2);
     final radius = size.width / 2;
@@ -259,7 +263,7 @@ class RoulettePainter extends CustomPainter {
         paint,
       );
     }
-    
+
     // Linhas divisórias para melhor visualização
     paint.color = Colors.white24;
     paint.style = PaintingStyle.stroke;
@@ -277,7 +281,7 @@ class RoulettePainter extends CustomPainter {
     paint.color = AppColors.secondary;
     paint.strokeWidth = 8;
     canvas.drawCircle(center, radius, paint);
-    
+
     paint.color = AppColors.primary;
     paint.strokeWidth = 2;
     canvas.drawCircle(center, radius, paint);

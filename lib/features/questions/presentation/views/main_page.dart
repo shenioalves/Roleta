@@ -16,7 +16,7 @@ class MainPage extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: const Text(
-            'TITAN ROLETA',
+            'ROLETA TITANICA',
             style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1.2),
           ),
           centerTitle: true,
