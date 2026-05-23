@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
+import '../../../../core/di/service_locator.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../viewmodels/question_store.dart';
 import '../widgets/question_roulette.dart';
 
 class RouletteView extends StatelessWidget {
-  final QuestionStore store;
+  const RouletteView({super.key});
 
-  const RouletteView({super.key, required this.store});
-
-  void _showQuestionDialog(BuildContext context, int index) {
-    final sortedIds = store.questions.keys.toList()..sort();
-    final questionId = sortedIds[index];
+  void _showQuestionDialog(
+    BuildContext context,
+    QuestionStore store,
+    int index,
+  ) {
+    final questionId = store.sortedIds[index];
     final questionText =
         store.questions[questionId] ?? 'Pergunta não encontrada';
     showDialog(
@@ -61,6 +63,8 @@ class RouletteView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final store = sl<QuestionStore>();
+
     return Observer(
       builder: (_) {
         return store.totalQuestions == 0
@@ -80,7 +84,7 @@ class RouletteView extends StatelessWidget {
               )
             : QuestionRoulette(
                 store: store,
-                onResult: (index) => _showQuestionDialog(context, index),
+                onResult: (index) => _showQuestionDialog(context, store, index),
               );
       },
     );

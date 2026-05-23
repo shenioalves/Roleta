@@ -16,6 +16,13 @@ mixin _$QuestionStore on QuestionStoreBase, Store {
     () => super.totalQuestions,
     name: 'QuestionStoreBase.totalQuestions',
   )).value;
+  Computed<List<int>>? _$sortedIdsComputed;
+
+  @override
+  List<int> get sortedIds => (_$sortedIdsComputed ??= Computed<List<int>>(
+    () => super.sortedIds,
+    name: 'QuestionStoreBase.sortedIds',
+  )).value;
 
   late final _$questionsAtom = Atom(
     name: 'QuestionStoreBase.questions',
@@ -71,6 +78,24 @@ mixin _$QuestionStore on QuestionStoreBase, Store {
     });
   }
 
+  late final _$currentRotationAtom = Atom(
+    name: 'QuestionStoreBase.currentRotation',
+    context: context,
+  );
+
+  @override
+  double get currentRotation {
+    _$currentRotationAtom.reportRead();
+    return super.currentRotation;
+  }
+
+  @override
+  set currentRotation(double value) {
+    _$currentRotationAtom.reportWrite(value, super.currentRotation, () {
+      super.currentRotation = value;
+    });
+  }
+
   late final _$_loadQuestionsAsyncAction = AsyncAction(
     'QuestionStoreBase._loadQuestions',
     context: context,
@@ -107,12 +132,24 @@ mixin _$QuestionStore on QuestionStoreBase, Store {
   );
 
   @override
-  void drawWinner() {
+  void calculateRotation() {
     final _$actionInfo = _$QuestionStoreBaseActionController.startAction(
-      name: 'QuestionStoreBase.drawWinner',
+      name: 'QuestionStoreBase.calculateRotation',
     );
     try {
-      return super.drawWinner();
+      return super.calculateRotation();
+    } finally {
+      _$QuestionStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void updateRotation(double value) {
+    final _$actionInfo = _$QuestionStoreBaseActionController.startAction(
+      name: 'QuestionStoreBase.updateRotation',
+    );
+    try {
+      return super.updateRotation(value);
     } finally {
       _$QuestionStoreBaseActionController.endAction(_$actionInfo);
     }
@@ -124,7 +161,9 @@ mixin _$QuestionStore on QuestionStoreBase, Store {
 questions: ${questions},
 winnerIndex: ${winnerIndex},
 targetRotationAngle: ${targetRotationAngle},
-totalQuestions: ${totalQuestions}
+currentRotation: ${currentRotation},
+totalQuestions: ${totalQuestions},
+sortedIds: ${sortedIds}
     ''';
   }
 }

@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import '../../../../core/di/service_locator.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../viewmodels/question_store.dart';
 
 class AdminView extends StatefulWidget {
-  final QuestionStore store;
-
-  const AdminView({super.key, required this.store});
+  const AdminView({super.key});
 
   @override
   State<AdminView> createState() => _AdminViewState();
@@ -14,10 +13,11 @@ class AdminView extends StatefulWidget {
 
 class _AdminViewState extends State<AdminView> {
   final TextEditingController _controller = TextEditingController();
+  final QuestionStore store = sl<QuestionStore>();
 
   void _addQuestion() {
     if (_controller.text.isNotEmpty) {
-      widget.store.addQuestion(_controller.text);
+      store.addQuestion(_controller.text);
       _controller.clear();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Pergunta adicionada com sucesso!')),
@@ -84,7 +84,7 @@ class _AdminViewState extends State<AdminView> {
           Expanded(
             child: Observer(
               builder: (_) {
-                final questionIds = widget.store.questions.keys.toList()..sort();
+                final questionIds = store.sortedIds;
                 
                 if (questionIds.isEmpty) {
                   return const Center(
@@ -96,11 +96,11 @@ class _AdminViewState extends State<AdminView> {
                   itemCount: questionIds.length,
                   itemBuilder: (context, index) {
                     final id = questionIds[index];
-                    final text = widget.store.questions[id]!;
+                    final text = store.questions[id]!;
                     
                     return Card(
                       margin: const EdgeInsets.only(bottom: 12),
-                      color: index % 2 == 0 ? AppColors.white : Colors.grey.shade50,
+                      color: index % 2 == 0 ? Colors.white : Colors.grey.shade50,
                       elevation: 2,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -120,7 +120,7 @@ class _AdminViewState extends State<AdminView> {
                         ),
                         trailing: IconButton(
                           icon: const Icon(Icons.delete_outline, color: Colors.red),
-                          onPressed: () => widget.store.deleteQuestion(id),
+                          onPressed: () => store.deleteQuestion(id),
                         ),
                       ),
                     );

@@ -24,8 +24,6 @@ class _QuestionRouletteState extends State<QuestionRoulette>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
-  double _currentRotation = 0;
-  final Random _random = Random();
 
   @override
   void initState() {
@@ -44,30 +42,18 @@ class _QuestionRouletteState extends State<QuestionRoulette>
   void spin() {
     if (_controller.isAnimating || widget.store.totalQuestions == 0) return;
 
-    widget.store.drawWinner();
-
-    final int winnerIndex = widget.store.winnerIndex!;
-    final double targetRotationRelative = widget.store.targetRotationAngle;
-
-    double fullSpins = (5 + _random.nextInt(3)) * 2 * pi;
-    double finalRotation =
-        _currentRotation +
-        fullSpins +
-        (targetRotationRelative - (_currentRotation % (2 * pi)));
-
-    if (finalRotation <= _currentRotation) {
-      finalRotation += 2 * pi;
-    }
+    widget.store.calculateRotation();
 
     _animation = Tween<double>(
-      begin: _currentRotation,
-      end: finalRotation,
+      begin: widget.store.currentRotation,
+      end: widget.store.targetRotationAngle,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutQuart));
 
-    _currentRotation = finalRotation;
-
     _controller.forward(from: 0).then((_) {
-      widget.onResult(winnerIndex);
+      widget.store.updateRotation(widget.store.targetRotationAngle);
+      if (widget.store.winnerIndex != null) {
+        widget.onResult(widget.store.winnerIndex!);
+      }
     });
   }
 
@@ -81,16 +67,21 @@ class _QuestionRouletteState extends State<QuestionRoulette>
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final size = min(constraints.maxWidth, constraints.maxHeight) * 0.7;
+        final double scaleW = constraints.maxWidth / 1440;
+        final double scaleH = constraints.maxHeight / 783;
+        final double scale = min(scaleW, scaleH);
+
+        final size = min(constraints.maxWidth, constraints.maxHeight) * 0.75;
 
         return Stack(
           fit: StackFit.expand,
           children: [
-            Center(
+            Align(
+              alignment: Alignment.topCenter,
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  const SizedBox(height: 20),
                   Stack(
                     clipBehavior: Clip.none,
                     alignment: Alignment.center,
@@ -132,28 +123,8 @@ class _QuestionRouletteState extends State<QuestionRoulette>
                                   height: size,
                                   width: size,
                                   alignment: Alignment.topCenter,
-                                  child: const Padding(
-                                    padding: EdgeInsets.only(top: 5),
-                                  ),
-                                ),
-                              );
-                            }),
-                            ...List.generate(widget.store.totalQuestions, (
-                              index,
-                            ) {
-                              final sectorAngle =
-                                  (2 * pi) / widget.store.totalQuestions;
-                              final angle =
-                                  index * sectorAngle + sectorAngle / 2;
-
-                              return Transform.rotate(
-                                angle: angle,
-                                child: Container(
-                                  height: size,
-                                  width: size,
-                                  alignment: Alignment.topCenter,
                                   child: Padding(
-                                    padding: const EdgeInsets.only(top: 5),
+                                    padding: EdgeInsets.only(top: size * 0.02),
                                     child: Text(
                                       '${index + 1}',
                                       style: TextStyle(
@@ -177,12 +148,12 @@ class _QuestionRouletteState extends State<QuestionRoulette>
                               'assets/logo.svg',
                               width: size * 0.8,
                               height: size * 0.8,
-                              placeholderBuilder: (context) => const Center(
+                              placeholderBuilder: (context) => Center(
                                 child: Text(
                                   'TITAN',
                                   style: TextStyle(
                                     color: AppColors.secondary,
-                                    fontSize: 40,
+                                    fontSize: size * 0.1,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -192,24 +163,24 @@ class _QuestionRouletteState extends State<QuestionRoulette>
                         ),
                       ),
                       Positioned(
-                        top: (constraints.maxHeight - size) / 2 - 135,
+                        top: -size * 0.09,
                         child: Icon(
                           Icons.arrow_drop_down_sharp,
-                          size: 80,
+                          size: size * 0.2,
                           color: Colors.red.shade900,
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 30),
+                  SizedBox(height: 30),
                   ElevatedButton(
                     onPressed: widget.store.totalQuestions > 0 ? spin : null,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.secondary,
                       foregroundColor: AppColors.primary,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 60,
-                        vertical: 25,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 60 * scale,
+                        vertical: 25 * scale,
                       ),
                       elevation: 10,
                       side: const BorderSide(
@@ -217,13 +188,13 @@ class _QuestionRouletteState extends State<QuestionRoulette>
                         width: 2,
                       ),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(40),
+                        borderRadius: BorderRadius.circular(40 * scale),
                       ),
                     ),
-                    child: const Text(
+                    child: Text(
                       'GIRAR ROLETA',
                       style: TextStyle(
-                        fontSize: 24,
+                        fontSize: 24 * scale,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -238,17 +209,17 @@ class _QuestionRouletteState extends State<QuestionRoulette>
                 'assets/tito_ansioso.png',
                 alignment: Alignment.bottomLeft,
                 fit: BoxFit.contain,
-                height: size * 1.1,
+                height: size * 0.8,
               ),
             ),
             Positioned(
-              right: -110,
-              bottom: -70,
+              right: -size * 0.19,
+              bottom: -size * 0.13,
               child: Image.asset(
                 'assets/tito_beats_bg.png',
                 alignment: Alignment.bottomRight,
                 fit: BoxFit.contain,
-                height: size * 1.2,
+                height: size * 0.9,
               ),
             ),
           ],

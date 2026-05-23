@@ -21,9 +21,15 @@ abstract class QuestionStoreBase with Store {
 
   @observable
   double targetRotationAngle = 0.0;
+  
+  @observable
+  double currentRotation = 0.0;
 
   @computed
   int get totalQuestions => questions.length;
+
+  @computed
+  List<int> get sortedIds => questions.keys.toList()..sort();
 
   @action
   Future<void> _loadQuestions() async {
@@ -47,14 +53,31 @@ abstract class QuestionStoreBase with Store {
   }
 
   @action
-  void drawWinner() {
+  void calculateRotation() {
     if (totalQuestions == 0) return;
+    
     final random = Random();
     winnerIndex = random.nextInt(totalQuestions);
 
     final sectorAngle = (2 * pi) / totalQuestions;
     final centerOfWinnerSlice = (winnerIndex! * sectorAngle) + (sectorAngle / 2);
+    final targetRelative = -centerOfWinnerSlice;
 
-    targetRotationAngle = -centerOfWinnerSlice;
+    double fullSpins = (5 + random.nextInt(3)) * 2 * pi;
+    double finalRotation =
+        currentRotation +
+        fullSpins +
+        (targetRelative - (currentRotation % (2 * pi)));
+
+    if (finalRotation <= currentRotation) {
+      finalRotation += 2 * pi;
+    }
+    
+    targetRotationAngle = finalRotation;
+  }
+
+  @action
+  void updateRotation(double value) {
+    currentRotation = value;
   }
 }

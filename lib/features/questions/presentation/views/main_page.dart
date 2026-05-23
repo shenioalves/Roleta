@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
-import '../viewmodels/question_store.dart';
 import 'admin_view.dart';
 import 'roulette_view.dart';
 
 class MainPage extends StatelessWidget {
-  final QuestionStore store;
-
-  const MainPage({super.key, required this.store});
+  const MainPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -37,19 +34,19 @@ class MainPage extends StatelessWidget {
           ),
         ),
         body: Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             color: Colors.white,
-            image: const DecorationImage(
+            image: DecorationImage(
               image: NetworkImage(
                 'https://www.transparenttextures.com/patterns/cubes.png',
               ),
               opacity: 0.5,
             ),
           ),
-          child: TabBarView(
+          child: const TabBarView(
             children: [
-              RouletteView(store: store),
-              AdminView(store: store),
+              RouletteView(),
+              AdminView(),
             ],
           ),
         ),

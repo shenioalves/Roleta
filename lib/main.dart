@@ -1,31 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
+
+import 'core/di/service_locator.dart';
 import 'core/theme/app_colors.dart';
-import 'features/questions/data/repositories/question_repository.dart';
-import 'features/questions/presentation/viewmodels/question_store.dart';
 import 'features/questions/presentation/views/main_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
-  // Initialize Hive
+
   await Hive.initFlutter();
-  
-  // Setup Repository
-  final repository = QuestionRepositoryImpl();
-  await repository.init();
-  
-  // Setup Store
-  final store = QuestionStore(repository);
-  
-  runApp(MyApp(store: store));
+
+  await setupServiceLocator();
+
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  final QuestionStore store;
-
-  const MyApp({super.key, required this.store});
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +34,7 @@ class MyApp extends StatelessWidget {
         textTheme: GoogleFonts.poppinsTextTheme(),
         scaffoldBackgroundColor: AppColors.background,
       ),
-      home: MainPage(store: store),
+      home: const MainPage(),
     );
   }
 }
