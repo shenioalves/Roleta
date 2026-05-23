@@ -35,6 +35,42 @@ mixin _$QuestionStore on QuestionStoreBase, Store {
     });
   }
 
+  late final _$winnerIndexAtom = Atom(
+    name: 'QuestionStoreBase.winnerIndex',
+    context: context,
+  );
+
+  @override
+  int? get winnerIndex {
+    _$winnerIndexAtom.reportRead();
+    return super.winnerIndex;
+  }
+
+  @override
+  set winnerIndex(int? value) {
+    _$winnerIndexAtom.reportWrite(value, super.winnerIndex, () {
+      super.winnerIndex = value;
+    });
+  }
+
+  late final _$targetRotationAngleAtom = Atom(
+    name: 'QuestionStoreBase.targetRotationAngle',
+    context: context,
+  );
+
+  @override
+  double get targetRotationAngle {
+    _$targetRotationAngleAtom.reportRead();
+    return super.targetRotationAngle;
+  }
+
+  @override
+  set targetRotationAngle(double value) {
+    _$targetRotationAngleAtom.reportWrite(value, super.targetRotationAngle, () {
+      super.targetRotationAngle = value;
+    });
+  }
+
   late final _$_loadQuestionsAsyncAction = AsyncAction(
     'QuestionStoreBase._loadQuestions',
     context: context,
@@ -65,10 +101,29 @@ mixin _$QuestionStore on QuestionStoreBase, Store {
     return _$deleteQuestionAsyncAction.run(() => super.deleteQuestion(id));
   }
 
+  late final _$QuestionStoreBaseActionController = ActionController(
+    name: 'QuestionStoreBase',
+    context: context,
+  );
+
+  @override
+  void drawWinner() {
+    final _$actionInfo = _$QuestionStoreBaseActionController.startAction(
+      name: 'QuestionStoreBase.drawWinner',
+    );
+    try {
+      return super.drawWinner();
+    } finally {
+      _$QuestionStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
   @override
   String toString() {
     return '''
 questions: ${questions},
+winnerIndex: ${winnerIndex},
+targetRotationAngle: ${targetRotationAngle},
 totalQuestions: ${totalQuestions}
     ''';
   }

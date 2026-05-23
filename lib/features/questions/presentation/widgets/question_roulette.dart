@@ -2,14 +2,15 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../viewmodels/question_store.dart';
 
 class QuestionRoulette extends StatefulWidget {
-  final int count;
+  final QuestionStore store;
   final Function(int) onResult;
 
   const QuestionRoulette({
     super.key,
-    required this.count,
+    required this.store,
     required this.onResult,
   });
 
@@ -39,23 +40,13 @@ class _QuestionRouletteState extends State<QuestionRoulette>
   }
 
   void spin() {
-    if (_controller.isAnimating || widget.count == 0) return;
+    if (_controller.isAnimating || widget.store.totalQuestions == 0) return;
 
-    // 1. Sorteia o índice vencedor antes de começar a animação
-    final int winnerIndex = _random.nextInt(widget.count);
+    // 1. Sorteia o índice vencedor e calcula o ângulo no ViewModel
+    widget.store.drawWinner();
     
-    // 2. Cálculo matemático preciso para alinhar o número sorteado com o topo (12h)
-    // O ponteiro fixo está em -pi/2.
-    // Cada fatia i ocupa de (i * sectorAngle) até ((i+1) * sectorAngle).
-    // O centro da fatia i está em (i + 0.5) * sectorAngle.
-    // Queremos que o centro da fatia i pare exatamente no topo (-pi/2).
-    // Rotação necessária = (-pi/2) - (centro da fatia i).
-    
-    double sectorAngle = (2 * pi) / widget.count;
-    double centerOfWinnerSlice = (winnerIndex * sectorAngle) + (sectorAngle / 2);
-    
-    // Rotação alvo relativa para colocar o índice no topo
-    double targetRotationRelative = - (pi / 2) - centerOfWinnerSlice;
+    final int winnerIndex = widget.store.winnerIndex!;
+    final double targetRotationRelative = widget.store.targetRotationAngle;
     
     // Adicionamos voltas completas (mínimo 5 voltas) para o efeito visual
     double fullSpins = (5 + _random.nextInt(3)) * 2 * pi;
@@ -119,16 +110,16 @@ class _QuestionRouletteState extends State<QuestionRoulette>
                             height: size,
                             child: CustomPaint(
                               painter: RoulettePainter(
-                                count: widget.count,
+                                count: widget.store.totalQuestions,
                                 color1: AppColors.primary,
                                 color2: AppColors.secondary,
                               ),
                             ),
                           ),
                           // Números
-                          ...List.generate(widget.count, (index) {
-                            final sectorAngle = (2 * pi) / widget.count;
-                            final angle = index * sectorAngle;
+                          ...List.generate(widget.store.totalQuestions, (index) {
+                            final sectorAngle = (2 * pi) / widget.store.totalQuestions;
+                            final angle = index * sectorAngle + sectorAngle / 2; // Centraliza a posição do número na fatia
                             
                             return Transform.rotate(
                               angle: angle,
@@ -138,22 +129,19 @@ class _QuestionRouletteState extends State<QuestionRoulette>
                                 alignment: Alignment.topCenter,
                                 child: Padding(
                                   padding: EdgeInsets.only(top: size * 0.08),
-                                  child: Transform.rotate(
-                                    angle: sectorAngle / 2, // Centraliza o número na fatia
-                                    child: Text(
-                                      '${index + 1}',
-                                      style: TextStyle(
-                                        fontSize: size * 0.06,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                        shadows: const [
-                                          Shadow(
-                                            blurRadius: 4.0,
-                                            color: Colors.black54,
-                                            offset: Offset(2.0, 2.0),
-                                          ),
-                                        ],
-                                      ),
+                                  child: Text(
+                                    '${index + 1}',
+                                    style: TextStyle(
+                                      fontSize: size * 0.06,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                      shadows: const [
+                                        Shadow(
+                                          blurRadius: 4.0,
+                                          color: Colors.black54,
+                                          offset: Offset(2.0, 2.0),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),
@@ -219,7 +207,7 @@ class _QuestionRouletteState extends State<QuestionRoulette>
         ),
         const SizedBox(height: 30),
         ElevatedButton(
-          onPressed: widget.count > 0 ? spin : null,
+          onPressed: widget.store.totalQuestions > 0 ? spin : null,
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.secondary,
             foregroundColor: AppColors.primary,

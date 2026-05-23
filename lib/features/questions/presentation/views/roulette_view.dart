@@ -67,7 +67,7 @@ class RouletteView extends StatelessWidget {
                 ),
               )
             : QuestionRoulette(
-                count: store.totalQuestions,
+                store: store,
                 onResult: (index) => _showQuestionDialog(context, index),
               );
       },
