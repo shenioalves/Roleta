@@ -47,6 +47,7 @@ class _AdminViewState extends State<AdminView> {
               Expanded(
                 child: TextField(
                   controller: _controller,
+                  onSubmitted: (_) => _addQuestion(),
                   decoration: InputDecoration(
                     labelText: 'Digite a nova pergunta',
                     border: OutlineInputBorder(
@@ -60,6 +61,7 @@ class _AdminViewState extends State<AdminView> {
               const SizedBox(width: 16),
               ElevatedButton(
                 onPressed: _addQuestion,
+
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
                   foregroundColor: Colors.white,
