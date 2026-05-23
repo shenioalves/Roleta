@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../../../core/constants/roulette_constants.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../viewmodels/question_store.dart';
 
@@ -30,7 +31,7 @@ class _QuestionRouletteState extends State<QuestionRoulette>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 5),
+      duration: RouletteConstants.rotationDuration,
     );
 
     _animation = CurvedAnimation(
@@ -42,7 +43,7 @@ class _QuestionRouletteState extends State<QuestionRoulette>
   void spin() {
     if (_controller.isAnimating || widget.store.totalQuestions == 0) return;
 
-    widget.store.calculateRotation();
+    widget.store.spin();
 
     _animation = Tween<double>(
       begin: widget.store.currentRotation,
@@ -173,7 +174,7 @@ class _QuestionRouletteState extends State<QuestionRoulette>
                       ),
                     ],
                   ),
-                  SizedBox(height: 30),
+                  const SizedBox(height: 30),
                   ElevatedButton(
                     onPressed: widget.store.totalQuestions > 0 ? spin : null,
                     style: ElevatedButton.styleFrom(

@@ -96,6 +96,16 @@ mixin _$QuestionStore on QuestionStoreBase, Store {
     });
   }
 
+  late final _$initAsyncAction = AsyncAction(
+    'QuestionStoreBase.init',
+    context: context,
+  );
+
+  @override
+  Future<void> init() {
+    return _$initAsyncAction.run(() => super.init());
+  }
+
   late final _$_loadQuestionsAsyncAction = AsyncAction(
     'QuestionStoreBase._loadQuestions',
     context: context,
@@ -132,12 +142,24 @@ mixin _$QuestionStore on QuestionStoreBase, Store {
   );
 
   @override
-  void calculateRotation() {
+  void spin() {
     final _$actionInfo = _$QuestionStoreBaseActionController.startAction(
-      name: 'QuestionStoreBase.calculateRotation',
+      name: 'QuestionStoreBase.spin',
     );
     try {
-      return super.calculateRotation();
+      return super.spin();
+    } finally {
+      _$QuestionStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void _calculateRotation() {
+    final _$actionInfo = _$QuestionStoreBaseActionController.startAction(
+      name: 'QuestionStoreBase._calculateRotation',
+    );
+    try {
+      return super._calculateRotation();
     } finally {
       _$QuestionStoreBaseActionController.endAction(_$actionInfo);
     }

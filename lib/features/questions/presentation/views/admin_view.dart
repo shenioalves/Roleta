@@ -100,40 +100,10 @@ class _AdminViewState extends State<AdminView> {
                   itemCount: questionIds.length,
                   itemBuilder: (context, index) {
                     final id = questionIds[index];
-                    final text = store.questions[id]!;
-
-                    return Card(
-                      margin: const EdgeInsets.only(bottom: 12),
-                      color: index % 2 == 0
-                          ? Colors.white
-                          : Colors.grey.shade50,
-                      elevation: 2,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        side: BorderSide(
-                          color: AppColors.primary.withValues(alpha: 0.3),
-                        ),
-                      ),
-                      child: ListTile(
-                        leading: CircleAvatar(
-                          backgroundColor: AppColors.primary,
-                          child: Text(
-                            '${index + 1}',
-                            style: const TextStyle(color: Colors.white),
-                          ),
-                        ),
-                        title: Text(
-                          text,
-                          style: const TextStyle(fontWeight: FontWeight.w500),
-                        ),
-                        trailing: IconButton(
-                          icon: const Icon(
-                            Icons.delete_outline,
-                            color: Colors.red,
-                          ),
-                          onPressed: () => store.deleteQuestion(id),
-                        ),
-                      ),
+                    return QuestionItemWidget(
+                      id: id,
+                      index: index,
+                      store: store,
                     );
                   },
                 );
@@ -141,6 +111,51 @@ class _AdminViewState extends State<AdminView> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class QuestionItemWidget extends StatelessWidget {
+  final int id;
+  final int index;
+  final QuestionStore store;
+
+  const QuestionItemWidget({
+    super.key,
+    required this.id,
+    required this.index,
+    required this.store,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      color: index % 2 == 0 ? Colors.white : Colors.grey.shade50,
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: AppColors.primary.withValues(alpha: 0.3)),
+      ),
+      child: ListTile(
+        leading: CircleAvatar(
+          backgroundColor: AppColors.primary,
+          child: Text(
+            '${index + 1}',
+            style: const TextStyle(color: Colors.white),
+          ),
+        ),
+        title: Observer(
+          builder: (_) => Text(
+            store.questions[id] ?? '',
+            style: const TextStyle(fontWeight: FontWeight.w500),
+          ),
+        ),
+        trailing: IconButton(
+          icon: const Icon(Icons.delete_outline, color: Colors.red),
+          onPressed: () => store.deleteQuestion(id),
+        ),
       ),
     );
   }
