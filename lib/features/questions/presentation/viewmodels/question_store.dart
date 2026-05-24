@@ -1,7 +1,6 @@
 import 'dart:math';
-
 import 'package:mobx/mobx.dart';
-
+import '../../../../core/constants/roulette_constants.dart';
 import '../../../../core/services/audio_service.dart';
 import '../../data/repositories/question_repository.dart';
 
@@ -13,9 +12,7 @@ abstract class QuestionStoreBase with Store {
   final QuestionRepository _repository;
   final AudioService _audioService;
 
-  QuestionStoreBase(this._repository, this._audioService) {
-    _loadQuestions();
-  }
+  QuestionStoreBase(this._repository, this._audioService);
 
   @observable
   ObservableMap<int, String> questions = ObservableMap<int, String>();
@@ -34,6 +31,11 @@ abstract class QuestionStoreBase with Store {
 
   @computed
   List<int> get sortedIds => questions.keys.toList()..sort();
+
+  @action
+  Future<void> init() async {
+    await _loadQuestions();
+  }
 
   @action
   Future<void> _loadQuestions() async {
@@ -57,20 +59,24 @@ abstract class QuestionStoreBase with Store {
   }
 
   @action
-  void calculateRotation() {
+  void spin() {
     if (totalQuestions == 0) return;
-
     _audioService.playSpinSound();
+    _calculateRotation();
+  }
 
+  @action
+  void _calculateRotation() {
     final random = Random();
     winnerIndex = random.nextInt(totalQuestions);
 
     final sectorAngle = (2 * pi) / totalQuestions;
-    final centerOfWinnerSlice =
-        (winnerIndex! * sectorAngle) + (sectorAngle / 2);
+    final centerOfWinnerSlice = (winnerIndex! * sectorAngle) + (sectorAngle / 2);
     final targetRelative = -centerOfWinnerSlice;
 
-    double fullSpins = (5 + random.nextInt(3)) * 2 * pi;
+    double fullSpins = (RouletteConstants.minFullSpins + 
+                       random.nextInt(RouletteConstants.maxAdditionalSpins)) * 2 * pi;
+
     double finalRotation =
         currentRotation +
         fullSpins +
@@ -93,3 +99,4 @@ abstract class QuestionStoreBase with Store {
     _audioService.playResultSound();
   }
 }
+

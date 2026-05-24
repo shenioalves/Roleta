@@ -18,7 +18,7 @@ Future<void> setupServiceLocator() async {
   locator.registerLazySingleton<QuestionRepository>(() => questionRepository);
 
   // Stores
-  locator.registerFactory(
-    () => QuestionStore(locator<QuestionRepository>(), locator<AudioService>()),
-  );
+  final questionStore = QuestionStore(locator<QuestionRepository>(), locator<AudioService>());
+  await questionStore.init();
+  locator.registerSingleton<QuestionStore>(questionStore);
 }
