@@ -214,7 +214,7 @@ class _QuestionRouletteState extends State<QuestionRoulette>
                 height: size * 0.8,
               ),
             ),
-            Positioned(
+            /*    Positioned(
               right: -size * 0.19,
               bottom: -size * 0.13,
               child: Image.asset(
@@ -223,7 +223,7 @@ class _QuestionRouletteState extends State<QuestionRoulette>
                 fit: BoxFit.contain,
                 height: size * 0.9,
               ),
-            ),
+            ),*/
           ],
         );
       },
